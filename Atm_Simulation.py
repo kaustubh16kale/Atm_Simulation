@@ -48,23 +48,57 @@ def withdraw_money(amount_withdraw):
                 print(f"{value} - {note} notes")
                 atm_amount_distribution[value]-=note
             print("Amount withdrawn succesfull")
+            logging.info("Amount Withdrawn succesfull")
         else:
             logging.warning(f"Total amount of withdrawable notes exceeded {total_notes} notes")
             print("Unable to withdraw as maximum amount of notes exceeded 40 notes")
         total_amount_display()
 
+def update_atm_amount_distribution():
+    '''
+    Function: To update the number of notes in the am
+    Paramter: None
+    Return: None
+    '''
+    print("Available notes in ATM")
+    total_amount_display()
+    notes_add={}
+    for value,note in atm_amount_distribution.items():
+        notes_add[value]=int(input((f"Enter the amount of notes of value {value} : ")))
+        if atm_amount_distribution[value]+notes_add[value]>500:
+            print(f"The total amount of notes for {value} exceeded {500} notes")
+            logging.warning("Notes exceeded while adding")
+            notes_add.clear()
+            break
+    for value,note in notes_add.items():
+        atm_amount_distribution[value]+=note
+    if notes_add:
+        print(f"Notes added succesfully {notes_add}")
+        logging.info(f"Notes added {notes_add}")
+    else:
+        print("Note adding unsucesfull")
+        logging.warning("notes already available while adding")
+    total_amount_display()
+         
 def main():
     '''
     Function main()
     Return : None
     '''
-    try :
-        total_amount_display()
-        print("Enter amount to withdraw: ")
-        amount_withdraw=int(input())
-        withdraw_money(amount_withdraw)
-    except Exception as e:
-        logging.log(e)
+    while True:
+        try :
+            choice=int(input("1 to add notes to atm \n2 to withdraw money from atm:\n3 to exit"))
+            match choice:
+                case 1:
+                    update_atm_amount_distribution()
+                case 2:
+                    print("Enter amount to withdraw: ")
+                    amount_withdraw=int(input())
+                    withdraw_money(amount_withdraw)
+                case 3:
+                    break
+        except Exception as e:
+            logging.warning(e)
 
 
 if __name__=="__main__":
